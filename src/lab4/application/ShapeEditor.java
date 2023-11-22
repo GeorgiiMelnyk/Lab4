@@ -1,10 +1,9 @@
-package lab4;
+package lab4.application;
+
+import lab4.shapes.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 
 public class ShapeEditor extends JFrame{
     private Image icon = new ImageIcon("resources/images/Lab4Icon.png").getImage();
@@ -112,13 +111,13 @@ public class ShapeEditor extends JFrame{
         JLabel label = new JLabel("Фігуру не обрано");
 
         backArrowButton.addActionListener(e -> drawingPanel.removeLastShape());
-        pointButton.addActionListener(e -> { switchTo(pointShape);  label.setText("Крапка"); });
-        lineButton.addActionListener(e -> { switchTo(lineShape); label.setText("Лінія"); });
-        lineWCirclesButton.addActionListener(e -> { switchTo(lineWCirclesShape); label.setText("Лінія з кругами"); });
-        rectangleButton.addActionListener(e -> { switchTo(rectangleShape); label.setText("Прямокутник"); });
-        ellipseButton.addActionListener(e -> { switchTo(ellipseShape); label.setText("Еліпс"); });
-        pencilButton.addActionListener(e -> { switchTo(pencilShape); label.setText("Пензлик"); });
-        cubeButton.addActionListener(e -> { switchTo(cubeShape); label.setText("Куб"); });
+        pointButton.addActionListener(e -> { drawingPanel.setCurrentShape(pointShape, pointShape); label.setText("Крапка"); });
+        lineButton.addActionListener(e -> { drawingPanel.setCurrentShape(lineShape, lineShape); label.setText("Лінія"); });
+        lineWCirclesButton.addActionListener(e -> { drawingPanel.setCurrentShape(lineWCirclesShape, lineWCirclesShape); label.setText("Лінія з кругами"); });
+        rectangleButton.addActionListener(e -> { drawingPanel.setCurrentShape(rectangleShape, rectangleShape); label.setText("Прямокутник"); });
+        ellipseButton.addActionListener(e -> { drawingPanel.setCurrentShape(ellipseShape, ellipseShape); label.setText("Еліпс"); });
+        pencilButton.addActionListener(e -> { drawingPanel.setCurrentShape(pencilShape, pencilShape); label.setText("Пензлик"); });
+        cubeButton.addActionListener(e -> { drawingPanel.setCurrentShape(cubeShape, cubeShape); label.setText("Куб"); });
 
         backArrowButton.setFocusPainted(false);
         pointButton.setFocusPainted(false);
@@ -142,18 +141,6 @@ public class ShapeEditor extends JFrame{
 
         toolbar.setFloatable(false);
         this.add(toolbar, BorderLayout.NORTH);
-    }
-
-    private void switchTo(MouseAdapter adapter) {
-        for(MouseListener mouseListener : drawingPanel.getMouseListeners()){
-            drawingPanel.removeMouseListener(mouseListener);
-        }
-        for(MouseMotionListener motionListener : drawingPanel.getMouseMotionListeners()){
-            drawingPanel.removeMouseMotionListener(motionListener);
-        }
-
-        drawingPanel.addMouseListener(adapter);
-        drawingPanel.addMouseMotionListener(adapter);
     }
 
 }

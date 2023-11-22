@@ -1,13 +1,17 @@
-package lab4;
+package lab4.shapes;
+
+import lab4.application.DrawingPanel;
+import lab4.application.MyShape;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 
-public class RectangleShape extends MouseAdapter {
+public class RectangleShape extends MouseAdapter implements MyShape {
     private DrawingPanel drawingPanel;
     private Point startPoint;
+    private Rectangle2D tempRectangle;
 
     public RectangleShape(DrawingPanel panel) {
         this.drawingPanel = panel;
@@ -21,10 +25,11 @@ public class RectangleShape extends MouseAdapter {
     @Override
     public void mouseDragged(MouseEvent e) {
         if (startPoint != null) {
-            drawingPanel.setTempRectangle(Math.min(startPoint.x, e.getX()),
+           tempRectangle = new Rectangle2D.Double(Math.min(startPoint.x, e.getX()),
                     Math.min(startPoint.y, e.getY()),
                     Math.abs(startPoint.x - e.getX()),
                     Math.abs(startPoint.y - e.getY()));
+           drawingPanel.repaint();
         }
     }
 
@@ -43,9 +48,23 @@ public class RectangleShape extends MouseAdapter {
                     Math.abs(startPoint.x - e.getX()),
                     Math.abs(startPoint.y - e.getY())
             ), false, Color.BLACK);
+            tempRectangle = null;
+            startPoint = null;
+            drawingPanel.repaint();
         }
-        drawingPanel.clearTempRectangle();
-        startPoint = null;
     }
 
+    @Override
+    public void draw(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g;
+        if(tempRectangle != null){
+            Stroke dashedStroke = new BasicStroke(2, BasicStroke.CAP_BUTT,
+                    BasicStroke.JOIN_BEVEL, 0, new float[]{5}, 0);
+            g2.setStroke(dashedStroke);
+            g2.setColor(drawingPanel.getColorOfFigure());
+            g2.fill(tempRectangle);
+            g2.setColor(Color.BLACK);
+            g2.draw(tempRectangle);
+        }
+    }
 }

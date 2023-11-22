@@ -1,4 +1,4 @@
-package lab4;
+package lab4.application;
 
 
 public class Main {

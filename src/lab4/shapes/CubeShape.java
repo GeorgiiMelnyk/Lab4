@@ -1,4 +1,7 @@
-package lab4;
+package lab4.shapes;
+
+import lab4.application.DrawingPanel;
+import lab4.application.MyShape;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -8,9 +11,10 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CubeShape extends MouseAdapter {
+public class CubeShape extends MouseAdapter implements MyShape {
     private DrawingPanel drawingPanel;
     private Point startPoint;
+    private List<Shape> tempCube = new ArrayList<>();
     public CubeShape(DrawingPanel drawingPanel){
         this.drawingPanel = drawingPanel;
     }
@@ -23,7 +27,9 @@ public class CubeShape extends MouseAdapter {
     @Override
     public void mouseDragged(MouseEvent e) {
         if (startPoint != null){
-           drawingPanel.setTempCube(getCurrentCube(e.getPoint()));
+            tempCube.clear();
+            tempCube.addAll(getCurrentCube(e.getPoint()));
+            drawingPanel.repaint();
         }
     }
 
@@ -32,15 +38,14 @@ public class CubeShape extends MouseAdapter {
         if(startPoint != null){
             List<Shape> finalCube = getCurrentCube(e.getPoint());
             drawingPanel.addShape(true, finalCube.get(0), false, drawingPanel.getColorOfFigure());
-            drawingPanel.addShape(false, finalCube.get(1), false, drawingPanel.getColorOfFigure());
-            drawingPanel.addShape(false, finalCube.get(2), false, drawingPanel.getColorOfFigure());
-            drawingPanel.addShape(false, finalCube.get(3), false, drawingPanel.getColorOfFigure());
-            drawingPanel.addShape(false, finalCube.get(4), false, drawingPanel.getColorOfFigure());
-            drawingPanel.addShape(false, finalCube.get(5), false, drawingPanel.getColorOfFigure());
+            for (int i = 1; i < finalCube.size(); i++){
+                drawingPanel.addShape(false, finalCube.get(i), false, drawingPanel.getColorOfFigure());
+            }
             finalCube.clear();
+            tempCube.clear();
+            startPoint = null;
+            drawingPanel.repaint();
         }
-        drawingPanel.clearTempCube();
-        startPoint = null;
     }
 
     private List<Shape> getCurrentCube(Point currentP) {
@@ -109,5 +114,19 @@ public class CubeShape extends MouseAdapter {
          cubeComponents.add(bottomRightLine);
 
          return cubeComponents;
+    }
+
+    @Override
+    public void draw(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g;
+        if (tempCube != null){
+            g2.setColor(drawingPanel.getColorOfFigure());
+            Stroke dashedStroke = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
+                    0, new float[]{5}, 0);
+            g2.setStroke(dashedStroke);
+            for (Shape cubeElement : tempCube){
+                g2.draw(cubeElement);
+            }
+        }
     }
 }
